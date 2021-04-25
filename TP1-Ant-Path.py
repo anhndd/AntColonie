@@ -4,23 +4,37 @@ from ant import Ant
 
 args = sys.argv
 isCircuit = False
-if len(args) == 2:
-    isCircuit = args[1]
-    isCircuit = bool(int(isCircuit))
-
 number_node = 10
+
+# setup finding shortest circuit or shotest path and how many node
+if len(args) > 1:
+    number_node = int(args[1])
+
+    if len(args) > 2:
+        isCircuit = args[2]
+        if (isCircuit == 1) | (isCircuit == "circuit"):
+            isCircuit = True
+        else:
+            isCircuit = False
+
 number_ant = 300
-max_t = 10000
 alpha = 1.035
 beta = 0.026
 Gamma = 0.02
 Q = 100
 p_evaporation = 0.9
-
+track = [[0] * number_node for x in range(0, number_node)]
 
 graph = [[random.randrange(1, 100) if x != y else 0 for x in range(0, number_node)] for y in range(0, number_node)]
-# graph = [[random.randrange(1, 100) for x in range(0, number_node)] for y in range(0, number_node)]
-track = [[0] * number_node for x in range(0, number_node)]
+
+# test specific case
+if number_node == 4:
+    graph = [[0, 57, 46, 20], [67, 0, 18, 13], [83, 7, 0, 18], [58, 76, 88, 0]]; number_node = 4
+elif number_node == 5:
+    graph = [[77, 99, 51, 35, 99], [18, 94, 25, 24, 74], [94, 68, 98, 33, 6], [96, 76, 26, 56, 82], [55, 9, 43, 12, 63]]; number_node = 5
+elif number_node == 10:
+    graph = [[0, 36, 94, 57, 43, 89, 6, 30, 55, 80], [60, 0, 33, 65, 13, 64, 56, 78, 23, 64], [84, 56, 0, 8, 46, 8, 25, 32, 50, 69], [20, 97, 86, 0, 84, 27, 80, 8, 99, 66], [82, 15, 45, 52, 0, 57, 24, 84, 86, 41], [68, 56, 72, 58, 12, 0, 26, 21, 10, 93], [45, 22, 60, 33, 64, 46, 0, 34, 62, 71], [19, 4, 50, 24, 64, 52, 60, 0, 89, 17], [84, 94, 5, 24, 98, 62, 53, 24, 0, 5], [13, 10, 84, 58, 6, 27, 8, 77, 20, 0]]; number_node = 10
+
 
 def calculate_propability(from_node, path):
     p = [0] * number_node
@@ -159,6 +173,7 @@ if __name__ == '__main__':
     # graph in format matrix
     row_labels = [x for x in range(0, number_node)]
     graph_color = np.insert(np.insert(graph, 0, row_labels, axis=1), 0, [0] + row_labels, axis=0)
+    print("\ngraph:")
     print(np.matrix(graph_color))
 
     print("--- %s seconds ---" % (time.time() - start_time))
