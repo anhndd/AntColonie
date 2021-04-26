@@ -6,7 +6,7 @@ args = sys.argv
 isCircuit = False
 number_node = 10
 
-# setup finding shortest circuit or shotest path and how many node
+# setup finding shortest circuit or shortest path and how many node
 if len(args) > 1:
     number_node = int(args[1])
 
@@ -17,23 +17,18 @@ if len(args) > 1:
         else:
             isCircuit = False
 
+# parameters
 number_ant = 300
 alpha = 1.035
 beta = 0.026
 Gamma = 0.02
 Q = 100
 p_evaporation = 0.9
+
+# saving track of each edge
 track = [[0] * number_node for x in range(0, number_node)]
 
 graph = [[random.randrange(1, 100) if x != y else 0 for x in range(0, number_node)] for y in range(0, number_node)]
-
-# test specific case
-if number_node == 4:
-    graph = [[0, 57, 46, 20], [67, 0, 18, 13], [83, 7, 0, 18], [58, 76, 88, 0]]; number_node = 4
-elif number_node == 5:
-    graph = [[77, 99, 51, 35, 99], [18, 94, 25, 24, 74], [94, 68, 98, 33, 6], [96, 76, 26, 56, 82], [55, 9, 43, 12, 63]]; number_node = 5
-elif number_node == 10:
-    graph = [[0, 36, 94, 57, 43, 89, 6, 30, 55, 80], [60, 0, 33, 65, 13, 64, 56, 78, 23, 64], [84, 56, 0, 8, 46, 8, 25, 32, 50, 69], [20, 97, 86, 0, 84, 27, 80, 8, 99, 66], [82, 15, 45, 52, 0, 57, 24, 84, 86, 41], [68, 56, 72, 58, 12, 0, 26, 21, 10, 93], [45, 22, 60, 33, 64, 46, 0, 34, 62, 71], [19, 4, 50, 24, 64, 52, 60, 0, 89, 17], [84, 94, 5, 24, 98, 62, 53, 24, 0, 5], [13, 10, 84, 58, 6, 27, 8, 77, 20, 0]]; number_node = 10
 
 
 def calculate_propability(from_node, path):
@@ -77,6 +72,7 @@ def update_tracking_total(ants):
             for j in range(0, number_node):
                 if (i, j) in ant.path:
                     track[i][j] += contribution
+
 
 if __name__ == '__main__':
     start_time = time.time()
@@ -124,7 +120,7 @@ if __name__ == '__main__':
                 if isCircuit & (to_node == destination):
                     ant.reach_destination = True
 
-                # If an ant finishs the tour, save result
+                # If an ant finished the tour, save result
                 if (isCircuit & (to_node == 0) & ant.reach_destination) | ((not isCircuit) & (to_node == destination)):
 
                     # save temporarily the path each time an ant finish its tour
@@ -150,19 +146,20 @@ if __name__ == '__main__':
         for x in most_path.keys():
             print(round(most_path[x][0] / sumAnt * 100, 2), "%", "Path", x, " length:", most_path[x][1])
 
-        # update the path with the most number of ants
+        # update the path which has the most number of ants
         if count_converge < max_temp[0]:
             count_converge = max_temp[0]
             path_converge = path_temp
             max_length_converge = most_path[path_converge][1]
             print("Loop", t, "Max ant travel the same way", path_temp, ":", max_temp[0], "ants")
 
-        # if algorithm is converged (All ants travel the same way) => End
+        # if algorithm is converged (All ants traveled the same way) => End
         if max_temp[0] == number_ant:
             break
         # if not, continue update tracks in each path
         update_tracking_total(ants)
         t += 1
+    # End algorithm
 
     # End algorithm, print the objective and hope the algorithm converge in the objective path
     print("\nSUCCESS" if (
@@ -170,7 +167,7 @@ if __name__ == '__main__':
           "objective shortest path:", objective_path,
           "shortest length:", shortest_path_length, "LOOP:", objective_loop)
 
-    # graph in format matrix
+    # print graph in matrix format
     row_labels = [x for x in range(0, number_node)]
     graph_color = np.insert(np.insert(graph, 0, row_labels, axis=1), 0, [0] + row_labels, axis=0)
     print("\ngraph:")
@@ -179,5 +176,5 @@ if __name__ == '__main__':
     print("--- %s seconds ---" % (time.time() - start_time))
 
     input("press enter to exit")
-    # graph in format array
+    # graph in array format
     print(graph)
